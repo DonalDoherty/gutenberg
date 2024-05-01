@@ -2,10 +2,10 @@
   "name": "gutenberg",
   "version": "1.0.0",
   "description": "Node.JS app for a reading list service.",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server",
+    "start": "node index.js",
     "dev": "nodemon server"
   },
   "author": "Donal Doherty",
@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.5"
   },
