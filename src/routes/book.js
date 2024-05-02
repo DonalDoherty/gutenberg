@@ -13,7 +13,7 @@ router.post('/', [
     body('title', 'Title is required and must be a string').exists().isString(),
     body('author', 'Author is required and must be a string').exists().isString(),
     body('publisher', 'Publisher must be a string').optional().isString(),
-    body('publicationDate', "Publication Date must be a valid date").optional().isDate(),
+    body('publicationDate', 'Publication Date must be a valid date').optional().isDate(),
     body('edition', 'Edition must be a string').optional().isString(),
     body('genre', 'Genre must be a string').optional().isString(),
     body('language', 'Language must be a string').optional().isString(),
@@ -29,11 +29,11 @@ router.post('/', [
 
         const { isbn13InUse, isbn10InUse } = await isbnInUse(isbn13, isbn10);
         if (isbn13InUse && isbn10InUse) {
-            return res.status(400).send("Book already exists");
+            return res.status(400).send('Book already exists');
         } else if (isbn13InUse) {
-            return res.status(400).send("ISBN-13 already in use");
+            return res.status(400).send('ISBN-13 already in use');
         } else if (isbn10InUse) {
-            return res.status(400).send("ISBN-10 already in use");
+            return res.status(400).send('ISBN-10 already in use');
         }
 
         const createBook = await pool.query(`
@@ -50,7 +50,7 @@ router.post('/', [
         res.json(createBook);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -74,13 +74,13 @@ router.delete('/:id', [
         });
 
         if (!deleteBook) {
-            return res.status(400).send("Book not found");
+            return res.status(400).send('Book not found');
         }
 
         res.json(deleteBook);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -103,13 +103,13 @@ router.get('/:id', [
         });
 
         if (!getBook) {
-            return res.status(404).send("Book not found");
+            return res.status(404).send('Book not found');
         }
 
         res.json(getBook);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -125,7 +125,7 @@ router.put('/:id', [
     body('title', 'Title is required and must be a string').exists().isString(),
     body('author', 'Author is required and must be a string').exists().isString(),
     body('publisher', 'Publisher must be a string').optional().isString(),
-    body('publicationDate', "Publication Date must be a valid date").optional().isDate(),
+    body('publicationDate', 'Publication Date must be a valid date').optional().isDate(),
     body('edition', 'Edition must be a string').optional().isString(),
     body('genre', 'Genre must be a string').optional().isString(),
     body('language', 'Language must be a string').optional().isString(),
@@ -142,9 +142,9 @@ router.put('/:id', [
 
         const { isbn13InUse, isbn10InUse } = await isbnInUse(isbn13, isbn10);
         if (isbn13InUse) {
-            return res.status(400).send("ISBN-13 already in use");
+            return res.status(400).send('ISBN-13 already in use');
         } else if (isbn10InUse) {
-            return res.status(400).send("ISBN-10 already in use");
+            return res.status(400).send('ISBN-10 already in use');
         }
 
         const updateBook = await pool.query(`
@@ -167,13 +167,13 @@ router.put('/:id', [
         });
 
         if (!updateBook) {
-            return res.status(400).send("Book not found");
+            return res.status(400).send('Book not found');
         }
 
         res.json(updateBook);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -225,7 +225,7 @@ router.get('/', [
     }
     catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 

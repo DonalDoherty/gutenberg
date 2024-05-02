@@ -29,7 +29,7 @@ router.post('/', [
         });
 
         if (userExists) {
-            return res.status(401).send("Email already in use");
+            return res.status(401).send('Email already in use');
         }
 
         const registrationKeyUsed = await pool.query(`
@@ -40,7 +40,7 @@ router.post('/', [
         });
 
         if (registrationKeyUsed === undefined || registrationKeyUsed === true) {
-            return res.status(401).send("Invalid registration key or key already used");
+            return res.status(401).send('Invalid registration key or key already used');
         } else {
             await pool.query(`
                 UPDATE gutenberg_common.registration_key
@@ -66,7 +66,7 @@ router.post('/', [
         res.json(token);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 

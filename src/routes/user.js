@@ -25,13 +25,13 @@ router.delete('/:id', [
         });
 
         if (!hashedPassword) {
-            return res.status(400).send("User not found");
+            return res.status(400).send('User not found');
         }
 
         const passwordCorrect = await bcrypt.compare(password, hashedPassword);
 
         if (passwordCorrect === false) {
-            return res.status(401).send("Invalid password");
+            return res.status(401).send('Invalid password');
         }
 
         const deleteUser = await pool.query(`
@@ -46,7 +46,7 @@ router.delete('/:id', [
         res.json(deleteUser);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -69,13 +69,13 @@ router.get('/:id', [
         });
 
         if (!getUser) {
-            return res.status(404).send("User not found");
+            return res.status(404).send('User not found');
         }
 
         res.json(getUser);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -109,7 +109,7 @@ router.put('/:id', [
         });
 
         if (!userExists) {
-            return res.status(400).send("User not found");
+            return res.status(400).send('User not found');
         }
         
         const saltRounds = 10;
@@ -131,7 +131,7 @@ router.put('/:id', [
         res.json(updateUser);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -156,7 +156,7 @@ router.get('/:id/readingLists', [
         });
 
         if (!userExists) {
-            return res.status(400).send("User not found");
+            return res.status(400).send('User not found');
         }
 
         const getReadingLists = await pool.query(`
@@ -169,7 +169,7 @@ router.get('/:id/readingLists', [
         res.json(getReadingLists);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 

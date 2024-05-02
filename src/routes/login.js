@@ -25,7 +25,7 @@ router.post('/', [
         });
 
         if (userExists === false) {
-            return res.status(401).send("Invalid email or password");
+            return res.status(401).send('Invalid email or password');
         }
 
         const user = await pool.query(`
@@ -38,7 +38,7 @@ router.post('/', [
         const passwordCorrect = await bcrypt.compare(password, user.user_password);
 
         if (passwordCorrect === false) {
-            return res.status(401).send("Invalid email or password");
+            return res.status(401).send('Invalid email or password');
         }
 
         const token = jwtTokenGenerator(user.user_uid);
@@ -46,7 +46,7 @@ router.post('/', [
         res.json(token);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 

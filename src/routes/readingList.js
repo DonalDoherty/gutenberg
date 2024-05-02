@@ -25,7 +25,7 @@ router.post('/', [
         res.json(createReadingList);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -49,13 +49,13 @@ router.delete('/:id', [
         });
 
         if (!deleteReadingList) {
-            return res.status(400).send("Reading List not found");
+            return res.status(400).send('Reading List not found');
         }
 
         res.json(deleteReadingList);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -78,13 +78,13 @@ router.get('/:id', [
         });
 
         if (!getReadingList) {
-            return res.status(404).send("Reading List not found");
+            return res.status(404).send('Reading List not found');
         }
 
         res.json(getReadingList);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -111,13 +111,13 @@ router.put('/:id', [
         });
 
         if (!updateReadingList) {
-            return res.status(400).send("Reading List not found");
+            return res.status(400).send('Reading List not found');
         }
 
         res.json(updateReadingList);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -159,7 +159,7 @@ router.get('/:id/books', [
         });
 
         if (!readingListExists) {
-            return res.status(400).send("Reading List not found");
+            return res.status(400).send('Reading List not found');
         }
 
         const getBooks = await pool.query(`
@@ -188,7 +188,7 @@ router.get('/:id/books', [
         res.json(getBooks);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -216,7 +216,7 @@ router.post('/:id/book', [
         });
 
         if (!readingListExists) {
-            return res.status(400).send("Reading List not found");
+            return res.status(400).send('Reading List not found');
         }
 
         const bookExists = await pool.query(`
@@ -229,7 +229,7 @@ router.post('/:id/book', [
         });
 
         if (!bookExists) {
-            return res.status(400).send("Book not found");
+            return res.status(400).send('Book not found');
         }
 
         const checkBookInReadingList = await pool.query(`
@@ -243,7 +243,7 @@ router.post('/:id/book', [
         });
 
         if (checkBookInReadingList) {
-            return res.status(400).send("Book already in Reading List");
+            return res.status(400).send('Book already in Reading List');
         }
 
         const statusValid = await pool.query(`
@@ -256,7 +256,7 @@ router.post('/:id/book', [
         });
 
         if (!statusValid) {
-            return res.status(400).send("Invalid book status");
+            return res.status(400).send('Invalid book status');
         }
 
         const addBookToReadingList = await pool.query(`
@@ -270,7 +270,7 @@ router.post('/:id/book', [
         res.json(addBookToReadingList);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -296,7 +296,7 @@ router.delete('/:readingListId/book/:bookId', [
         });
 
         if (!readingListExists) {
-            return res.status(400).send("Reading List not found");
+            return res.status(400).send('Reading List not found');
         }
 
         const removeBookFromReadingList = await pool.query(`
@@ -309,13 +309,13 @@ router.delete('/:readingListId/book/:bookId', [
         });
 
         if (!removeBookFromReadingList) {
-            return res.status(400).send("Book not found in Reading List");
+            return res.status(400).send('Book not found in Reading List');
         }
 
         res.json(removeBookFromReadingList);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
@@ -343,7 +343,7 @@ router.put('/:readingListId/book/:bookId', [
         });
 
         if (!readingListExists) {
-            return res.status(400).send("Reading List not found");
+            return res.status(400).send('Reading List not found');
         }
 
         const bookExists = await pool.query(`
@@ -356,7 +356,7 @@ router.put('/:readingListId/book/:bookId', [
         });
 
         if (!bookExists) {
-            return res.status(400).send("Book not found");
+            return res.status(400).send('Book not found');
         }
 
         const statusValid = await pool.query(`
@@ -369,7 +369,7 @@ router.put('/:readingListId/book/:bookId', [
         });
 
         if (!statusValid) {
-            return res.status(400).send("Invalid book status");
+            return res.status(400).send('Invalid book status');
         }
 
         const updateBookStatus = await pool.query(`
@@ -383,13 +383,13 @@ router.put('/:readingListId/book/:bookId', [
         });
 
         if (!updateBookStatus) {
-            return res.status(400).send("Book not found in Reading List");
+            return res.status(400).send('Book not found in Reading List');
         }
 
         res.json(updateBookStatus);
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
     }
 });
 
