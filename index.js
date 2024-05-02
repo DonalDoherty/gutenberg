@@ -12,6 +12,8 @@ app.use("/register", require("./src/routes/register"));
 app.use("/login", require("./src/routes/login"));
 app.use("/dashboard", require("./src/routes/dashboard"));
 app.use("/book", require("./src/routes/book/book"));
+app.use("/readingList", require("./src/routes/readingList/readingList"));
+app.use("/user", require("./src/routes/user/user"));
 
 app.get("/api", function (req, res) {
   res.json({ "users": ["userOne", "userTwo", "userThree"] })

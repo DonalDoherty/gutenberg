@@ -5,8 +5,8 @@ const jwtTokenGenerator = require('../auth/jwtTokenGenerator');
 const {check, validationResult} = require('express-validator');
 
 router.post('/', [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists()
+    check('email', 'Email is required and must be a valid email').exists().isEmail(),
+    check('password', 'Password is required and must be a string').exists().isString()
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {

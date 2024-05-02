@@ -6,11 +6,11 @@ const { check, validationResult } = require('express-validator');
 
 
 router.post('/', [
-    check('firstName', 'First name is required').exists(),
-    check('lastName', 'Last name is required').exists(),
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
-    check('registrationKey', 'Registration key is required').exists()
+    check('firstName', 'First name is required and must be a string').exists().isString(),
+    check('lastName', 'Last name is required and must be a string').exists().isString(),
+    check('email', 'Email is rquired and must be a valid email').exists().isEmail(),
+    check('password', 'Password is required and must be a valid string').exists().isString(),
+    check('registrationKey', 'Registration key is required and must be a valid string').exists().isString()
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {
