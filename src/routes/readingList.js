@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const pool = require('../../database/database');
+const pool = require('../database/database');
 const { body, param, validationResult } = require('express-validator');
 
 // Create a reading list
@@ -164,19 +164,19 @@ router.get('/:id/books', [
 
         const getBooks = await pool.query(`
             SELECT t1.* FROM gutenberg_common.book t1, gutenberg_common.reading_list_matrix t2
-            WHERE isbn13 ILIKE COALESCE('%' || $1 || '%', t1.isbn13)
-            AND isbn10 ILIKE COALESCE('%' || $2 || '%',  t1.isbn10 )
-            AND title ILIKE COALESCE('%' || $3 || '%',  t1.title )
-            AND author ILIKE COALESCE('%' || $4 || '%',  t1.author )
-            AND publisher ILIKE COALESCE('%' || $5 || '%',  t1.publisher )
-            AND publication_date >= COALESCE($6 , t1.publication_date)
-            AND publication_date <= COALESCE($7, t1.publication_date)
-            AND edition ILIKE COALESCE('%' || $8 || '%',  t1.edition )
-            AND genre ILIKE COALESCE('%' || $9 || '%',  t1.genre )
-            AND language ILIKE COALESCE('%' || $10 || '%',  t1.language )
-            AND page_count >= COALESCE($11, t1.page_count)
-            AND page_count <= COALESCE($12, t1.page_count)
-            AND summary ILIKE COALESCE('%' || $13 || '%',  t1.summary )
+            WHERE t1.isbn13 ILIKE COALESCE('%' || $1 || '%', t1.isbn13)
+            AND t1.isbn10 ILIKE COALESCE('%' || $2 || '%',  t1.isbn10 )
+            AND t1.title ILIKE COALESCE('%' || $3 || '%',  t1.title )
+            AND t1.author ILIKE COALESCE('%' || $4 || '%',  t1.author )
+            AND t1.publisher ILIKE COALESCE('%' || $5 || '%',  t1.publisher )
+            AND t1.publication_date >= COALESCE($6 , t1.publication_date)
+            AND t1.publication_date <= COALESCE($7, t1.publication_date)
+            AND t1.edition ILIKE COALESCE('%' || $8 || '%',  t1.edition )
+            AND t1.genre ILIKE COALESCE('%' || $9 || '%',  t1.genre )
+            AND t1.language ILIKE COALESCE('%' || $10 || '%',  t1.language )
+            AND t1.page_count >= COALESCE($11, t1.page_count)
+            AND t1.page_count <= COALESCE($12, t1.page_count)
+            AND t1.summary ILIKE COALESCE('%' || $13 || '%',  t1.summary )
             AND t2.status_id = COALESCE($14, t2.status_id)
             AND t1.book_uid = t2.book_id
             AND t2.reading_list_id = $15;
@@ -319,5 +319,78 @@ router.delete('/:readingListId/book/:bookId', [
     }
 });
 
+// Update book status in a reading list
+router.put('/:readingListId/book/:bookId', [
+    param('readingListId', 'Reading List ID is required and must be a positive integer').exists().isInt({ min: 0 }),
+    param('bookId', 'Book ID is required and must be a positive integer').exists().isInt({ min: 0 }),
+    body('statusId', 'Status ID is required and must be a positive integer').exists().isInt({ min: 0 })
+], async (req, res) => {
+    try {
+        if (!validationResult(req).isEmpty()) {
+            return res.status(400).json({ errors: validationResult(req).array() });
+        }
+
+        const { readingListId, bookId } = req.params;
+        const { statusId } = req.body;
+
+        const readingListExists = await pool.query(`
+            SELECT EXISTS(
+                SELECT reading_list_uid FROM gutenberg_common.reading_list
+                WHERE reading_list_uid = $1
+            );
+        `, [readingListId]).then((response) => {
+            return response.rows[0].exists;
+        });
+
+        if (!readingListExists) {
+            return res.status(400).send("Reading List not found");
+        }
+
+        const bookExists = await pool.query(`
+            SELECT EXISTS(
+                SELECT book_uid FROM gutenberg_common.book
+                WHERE book_uid = $1
+            );
+        `, [bookId]).then((response) => {
+            return response.rows[0].exists;
+        });
+
+        if (!bookExists) {
+            return res.status(400).send("Book not found");
+        }
+
+        const statusValid = await pool.query(`
+            SELECT EXISTS(
+                SELECT lu_book_status_uid FROM gutenberg_common.lu_book_status
+                WHERE lu_book_status_uid = $1
+            );
+        `, [statusId]).then((response) => {
+            return response.rows[0].exists;
+        });
+
+        if (!statusValid) {
+            return res.status(400).send("Invalid book status");
+        }
+
+        const updateBookStatus = await pool.query(`
+            UPDATE gutenberg_common.reading_list_matrix
+            SET status_id = $1
+            WHERE reading_list_id = $2
+            AND book_id = $3
+            RETURNING reading_list_matrix_uid;
+        `, [statusId, readingListId, bookId]).then((response) => {
+            return response.rows[0]?.reading_list_matrix_uid;
+        });
+
+        if (!updateBookStatus) {
+            return res.status(400).send("Book not found in Reading List");
+        }
+
+        res.json(updateBookStatus);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Server Error");
+    }
+});
 
 module.exports = router;
