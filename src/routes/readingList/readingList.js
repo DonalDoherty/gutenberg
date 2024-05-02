@@ -154,19 +154,19 @@ router.get('/books/:id', [
 
         const getBooks = await pool.query(`
             SELECT t1.* FROM gutenberg_common.book t1, gutenberg_common.reading_list_matrix t2
-            WHERE t1.isbn13 = COALESCE($1, t1.isbn13)
-            AND t1.isbn10 = COALESCE($2, t1.isbn10)
-            AND t1.title = COALESCE($3, t1.title)
-            AND t1.author = COALESCE($4, t1.author)
-            AND t1.publisher = COALESCE($5, t1.publisher)
-            AND t1.publication_date >= COALESCE($6, t1.publication_date)
-            AND t1.publication_date <= COALESCE($7, t1.publication_date)
-            AND t1.edition = COALESCE($8, t1.edition)
-            AND t1.genre = COALESCE($9, t1.genre)
-            AND t1.language = COALESCE($10, t1.language)
-            AND t1.page_count >= COALESCE($11, t1.page_count)
-            AND t1.page_count <= COALESCE($12, t1.page_count)
-            AND t1.summary LIKE COALESCE($13, t1.summary)
+            WHERE isbn13 ILIKE COALESCE('%' || $1 || '%', isbn13)
+            AND isbn10 ILIKE COALESCE('%' || $2 || '%',  isbn10 )
+            AND title ILIKE COALESCE('%' || $3 || '%',  title )
+            AND author ILIKE COALESCE('%' || $4 || '%',  author )
+            AND publisher ILIKE COALESCE('%' || $5 || '%',  publisher )
+            AND publication_date >= COALESCE($6 , publication_date)
+            AND publication_date <= COALESCE($7, publication_date)
+            AND edition ILIKE COALESCE('%' || $8 || '%',  edition )
+            AND genre ILIKE COALESCE('%' || $9 || '%',  genre )
+            AND language ILIKE COALESCE('%' || $10 || '%',  language )
+            AND page_count >= COALESCE($11, page_count)
+            AND page_count <= COALESCE($12, page_count)
+            AND summary ILIKE COALESCE('%' || $13 || '%',  summary )
             AND t1.book_uid = t2.book_id
             AND t2.reading_list_uid = $14;
             `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,

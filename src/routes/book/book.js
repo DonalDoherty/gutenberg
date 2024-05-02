@@ -89,6 +89,10 @@ router.get('/:id', [
     param('id', 'Book ID is required and must be a positive integer').exists().isInt({ min: 0 })
 ], async (req, res) => {
     try {
+        if (!validationResult(req).isEmpty()) {
+            return res.status(400).json({ errors: validationResult(req).array() });
+        }
+
         const { id } = req.params;
 
         const getBook = await pool.query(`
@@ -187,7 +191,7 @@ router.get('/', [
     check('language', 'Language must be a string').optional().isString(),
     check('pageCountMin', 'Page Count Min must be a positive integer').optional().isInt({min: 0}),
     check('pageCountMax', 'Page Count Max must be a positive integer').optional().isInt({min: 0}),
-    check('summary', 'Summary must be a string').optional().isString()
+    check('summaryContains', 'Summary Contains must be a string').optional().isString()
 ], async (req, res) => {
     try {
         const { isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
@@ -195,19 +199,19 @@ router.get('/', [
 
         const getBooks = await pool.query(`
             SELECT * FROM gutenberg_common.book
-            WHERE isbn13 = COALESCE($1, isbn13)
-            AND isbn10 = COALESCE($2, isbn10)
-            AND title = COALESCE($3, title)
-            AND author = COALESCE($4, author)
-            AND publisher = COALESCE($5, publisher)
-            AND publication_date >= COALESCE($6, publication_date)
+            WHERE isbn13 ILIKE COALESCE('%' || $1 || '%', isbn13)
+            AND isbn10 ILIKE COALESCE('%' || $2 || '%',  isbn10 )
+            AND title ILIKE COALESCE('%' || $3 || '%',  title )
+            AND author ILIKE COALESCE('%' || $4 || '%',  author )
+            AND publisher ILIKE COALESCE('%' || $5 || '%',  publisher )
+            AND publication_date >= COALESCE($6 , publication_date)
             AND publication_date <= COALESCE($7, publication_date)
-            AND edition = COALESCE($8, edition)
-            AND genre = COALESCE($9, genre)
-            AND language = COALESCE($10, language)
+            AND edition ILIKE COALESCE('%' || $8 || '%',  edition )
+            AND genre ILIKE COALESCE('%' || $9 || '%',  genre )
+            AND language ILIKE COALESCE('%' || $10 || '%',  language )
             AND page_count >= COALESCE($11, page_count)
             AND page_count <= COALESCE($12, page_count)
-            AND summary ILIKE COALESCE($13, summary)
+            AND summary ILIKE COALESCE('%' || $13 || '%',  summary )
         `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains]).then((response) => {
                 return response.rows;
