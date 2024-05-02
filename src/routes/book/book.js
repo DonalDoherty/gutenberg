@@ -1,24 +1,24 @@
 const router = require('express').Router();
 const pool = require('../../database/database');
-const { check, oneOf, param, validationResult } = require('express-validator');
+const { body, oneOf, param, validationResult } = require('express-validator');
 
 // Create a book
 router.post('/', [
     oneOf(
         [
-            check('isbn13', 'Atleast one valid ISBN type is required').exists().isISBN(13),
-            check('isbn10', 'Atleast one valid ISBN type is required').exists().isISBN(10)
+            body('isbn13', 'Atleast one valid ISBN type is required').exists().isISBN(13),
+            body('isbn10', 'Atleast one valid ISBN type is required').exists().isISBN(10)
         ]
     ),
-    check('title', 'Title is required and must be a string').exists().isString(),
-    check('author', 'Author is required and must be a string').exists().isString(),
-    check('publisher', 'Publisher must be a string').optional().isString(),
-    check('publicationDate', "Publication Date must be a valid date").optional().isDate(),
-    check('edition', 'Edition must be a string').optional().isString(),
-    check('genre', 'Genre must be a string').optional().isString(),
-    check('language', 'Language must be a string').optional().isString(),
-    check('pageCount', 'Page Count must be a positive integer').optional().isInt({ min: 0 }),
-    check('summary', 'Summary must be a string').optional().isString()
+    body('title', 'Title is required and must be a string').exists().isString(),
+    body('author', 'Author is required and must be a string').exists().isString(),
+    body('publisher', 'Publisher must be a string').optional().isString(),
+    body('publicationDate', "Publication Date must be a valid date").optional().isDate(),
+    body('edition', 'Edition must be a string').optional().isString(),
+    body('genre', 'Genre must be a string').optional().isString(),
+    body('language', 'Language must be a string').optional().isString(),
+    body('pageCount', 'Page Count must be a positive integer').optional().isInt({ min: 0 }),
+    body('summary', 'Summary must be a string').optional().isString()
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {
@@ -118,19 +118,19 @@ router.put('/:id', [
     param('id', 'Book ID is required and must be a positive integer').exists().isInt({ min: 0 }),
     oneOf(
         [
-            check('isbn13', 'Atleast one valid ISBN type is required').optional().isISBN(13),
-            check('isbn10', 'Atleast one valid ISBN type is required').optional().isISBN(10)
+            body('isbn13', 'Atleast one valid ISBN type is required').optional().isISBN(13),
+            body('isbn10', 'Atleast one valid ISBN type is required').optional().isISBN(10)
         ]
     ),
-    check('title', 'Title is required and must be a string').exists().isString(),
-    check('author', 'Author is required and must be a string').exists().isString(),
-    check('publisher', 'Publisher must be a string').optional().isString(),
-    check('publicationDate', "Publication Date must be a valid date").optional().isDate(),
-    check('edition', 'Edition must be a string').optional().isString(),
-    check('genre', 'Genre must be a string').optional().isString(),
-    check('language', 'Language must be a string').optional().isString(),
-    check('pageCount', 'Page Count must be a positive integer').optional().isInt({ min: 0 }),
-    check('summary', 'Summary must be a string').optional().isString()
+    body('title', 'Title is required and must be a string').exists().isString(),
+    body('author', 'Author is required and must be a string').exists().isString(),
+    body('publisher', 'Publisher must be a string').optional().isString(),
+    body('publicationDate', "Publication Date must be a valid date").optional().isDate(),
+    body('edition', 'Edition must be a string').optional().isString(),
+    body('genre', 'Genre must be a string').optional().isString(),
+    body('language', 'Language must be a string').optional().isString(),
+    body('pageCount', 'Page Count must be a positive integer').optional().isInt({ min: 0 }),
+    body('summary', 'Summary must be a string').optional().isString()
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {
@@ -179,21 +179,25 @@ router.put('/:id', [
 
 // Get books with filters
 router.get('/', [
-    check('isbn13', 'ISBN-13 must be a valid ISBN').optional().isISBN(13),
-    check('isbn10', 'ISBN-10 must be a valid ISBN').optional().isISBN(10),
-    check('title', 'Title must be a string').optional().isString(),
-    check('author', 'Author must be a string').optional().isString(),
-    check('publisher', 'Publisher must be a string').optional().isString(),
-    check('publicationDateStart', 'Publication Date Start must be a date').optional().isDate(),
-    check('publicationDateEnd', 'Publication Date End must be a date').optional().isDate(),
-    check('edition', 'Edition must be a string').optional().isString(),
-    check('genre', 'Genre must be a string').optional().isString(),
-    check('language', 'Language must be a string').optional().isString(),
-    check('pageCountMin', 'Page Count Min must be a positive integer').optional().isInt({ min: 0 }),
-    check('pageCountMax', 'Page Count Max must be a positive integer').optional().isInt({ min: 0 }),
-    check('summaryContains', 'Summary Contains must be a string').optional().isString()
+    body('isbn13', 'ISBN-13 must be a valid ISBN').optional().isISBN(13),
+    body('isbn10', 'ISBN-10 must be a valid ISBN').optional().isISBN(10),
+    body('title', 'Title must be a string').optional().isString(),
+    body('author', 'Author must be a string').optional().isString(),
+    body('publisher', 'Publisher must be a string').optional().isString(),
+    body('publicationDateStart', 'Publication Date Start must be a date').optional().isDate(),
+    body('publicationDateEnd', 'Publication Date End must be a date').optional().isDate(),
+    body('edition', 'Edition must be a string').optional().isString(),
+    body('genre', 'Genre must be a string').optional().isString(),
+    body('language', 'Language must be a string').optional().isString(),
+    body('pageCountMin', 'Page Count Min must be a positive integer').optional().isInt({ min: 0 }),
+    body('pageCountMax', 'Page Count Max must be a positive integer').optional().isInt({ min: 0 }),
+    body('summaryContains', 'Summary Contains must be a string').optional().isString()
 ], async (req, res) => {
     try {
+        if (!validationResult(req).isEmpty()) {
+            return res.status(400).json({ errors: validationResult(req).array() });
+        }
+        
         const { isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains } = req.body;
 

@@ -2,11 +2,11 @@ const router = require('express').Router();
 const pool = require('../database/database');
 const bcrypt = require('bcrypt');
 const jwtTokenGenerator = require('../auth/jwtTokenGenerator');
-const { check, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 router.post('/', [
-    check('email', 'Email is required and must be a valid email').exists().isEmail(),
-    check('password', 'Password is required and must be a string').exists().isString()
+    body('email', 'Email is required and must be a valid email').exists().isEmail(),
+    body('password', 'Password is required and must be a string').exists().isString()
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {

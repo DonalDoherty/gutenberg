@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const pool = require('../../database/database');
-const { check, oneOf, param, validationResult } = require('express-validator');
+const { body, oneOf, param, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
 
 
 // Delete a user - require password
 router.delete('/:id', [
     param('id', 'User ID is required and must be a positive integer').exists().isInt({ min: 0 }),
-    check('password', 'Password is required and must be a string').exists().isString()
+    body('password', 'Password is required and must be a string').exists().isString()
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {
@@ -19,7 +20,7 @@ router.delete('/:id', [
         const hashedPassword = await pool.query(`
         SELECT user_password FROM gutenberg_common.user
         WHERE user_uid = $1;
-        `, [email]).then((response) => {
+        `, [id]).then((response) => {
             return response.rows[0]?.user_password;
         });
 
@@ -54,6 +55,10 @@ router.get('/:id', [
     param('id', 'User ID is required and must be a positive integer').exists().isInt({ min: 0 })
 ], async (req, res) => {
     try {
+        if (!validationResult(req).isEmpty()) {
+            return res.status(400).json({ errors: validationResult(req).array() });
+        }
+
         const { id } = req.params;
 
         const getUser = await pool.query(`
@@ -79,9 +84,9 @@ router.put('/:id', [
     param('id', 'User ID is required and must be a positive integer').exists().isInt({ min: 0 }),
     oneOf(
         [
-            check('firstName', 'You must update atleast one of the following: First Name, Last Name, Password').optional(),
-            check('lastName', 'You must update atleast one of the following: First Name, Last Name, Password').optional(),
-            check('password', 'You must update atleast one of the following: First Name, Last Name, Password').optional()
+            body('firstName', 'You must update atleast one of the following: First Name, Last Name, Password, all of these values must be strings').optional().isString(),
+            body('lastName', 'You must update atleast one of the following: First Name, Last Name, Password, all of these values must be strings').optional().isString(),
+            body('password', 'You must update atleast one of the following: First Name, Last Name, Password, all of these values must be strings').optional().isString()
         ],
         'You must update atleast one of the following: First Name, Last Name, Password'
     )
@@ -106,15 +111,19 @@ router.put('/:id', [
         if (!userExists) {
             return res.status(400).send("User not found");
         }
+        
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const updateUser = await pool.query(`
             UPDATE gutenberg_common.user
-            SET user_firstname = COALESCE($1, user_firstname)
-            SET user_lastname = COALESCE($2, user_lastname)
-            SET password = COALESCE($3, password)
+            SET user_firstname = COALESCE($1, user_firstname),
+            user_lastname = COALESCE($2, user_lastname),
+            user_password = COALESCE($3, user_password)
             WHERE user_uid = $4
             RETURNING user_uid;
-        `, [firstName, lastName, password, id]).then((response) => {
+        `, [firstName, lastName, hashedPassword, id]).then((response) => {
             return response.rows[0].user_uid;
         });
 
@@ -127,10 +136,14 @@ router.put('/:id', [
 });
 
 // Get all reading lists for a user
-router.get('/readingLists/:id', [
+router.get('/:id/readingLists', [
     param('id', 'User ID is required and must be a positive integer').exists().isInt({ min: 0 })
 ], async (req, res) => {
     try {
+        if (!validationResult(req).isEmpty()) {
+            return res.status(400).json({ errors: validationResult(req).array() });
+        }
+
         const { id } = req.params;
 
         const userExists = await pool.query(`
@@ -148,7 +161,7 @@ router.get('/readingLists/:id', [
 
         const getReadingLists = await pool.query(`
             SELECT * FROM gutenberg_common.reading_list
-            WHERE user_uid = $1
+            WHERE user_id = $1
         `, [id]).then((response) => {
             return response.rows;
         });

@@ -2,15 +2,15 @@ const router = require('express').Router();
 const pool = require('../database/database');
 const bcrypt = require('bcrypt');
 const jwtTokenGenerator = require('../auth/jwtTokenGenerator');
-const { check, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 
 router.post('/', [
-    check('firstName', 'First name is required and must be a string').exists().isString(),
-    check('lastName', 'Last name is required and must be a string').exists().isString(),
-    check('email', 'Email is rquired and must be a valid email').exists().isEmail(),
-    check('password', 'Password is required and must be a valid string').exists().isString(),
-    check('registrationKey', 'Registration key is required and must be a valid string').exists().isString()
+    body('firstName', 'First name is required and must be a string').exists().isString(),
+    body('lastName', 'Last name is required and must be a string').exists().isString(),
+    body('email', 'Email is rquired and must be a valid email').exists().isEmail(),
+    body('password', 'Password is required and must be a valid string').exists().isString(),
+    body('registrationKey', 'Registration key is required and must be a valid string').exists().isString()
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {

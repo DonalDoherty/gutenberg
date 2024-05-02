@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { check, validationResult } = require('express-validator');
 
 module.exports = async (req, res, next) => {
     const token = req.header('token');
