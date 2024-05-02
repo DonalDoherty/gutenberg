@@ -2,7 +2,7 @@ const router = require('express').Router();
 const pool = require('../database/database');
 const bcrypt = require('bcrypt');
 const jwtTokenGenerator = require('../auth/jwtTokenGenerator');
-const {check, validationResult} = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
 router.post('/', [
     check('email', 'Email is required and must be a valid email').exists().isEmail(),
@@ -10,9 +10,9 @@ router.post('/', [
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {
-            return res.status(400).json({errors: validationResult(req).array()});
+            return res.status(400).json({ errors: validationResult(req).array() });
         }
-        
+
         const { email, password } = req.body;
 
         const userExists = await pool.query(`

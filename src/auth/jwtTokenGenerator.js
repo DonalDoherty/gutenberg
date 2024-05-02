@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 function generateAccessToken(user_id) {
-    const payload = { 
+    const payload = {
         user_id: user_id
     };
 

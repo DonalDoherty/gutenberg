@@ -82,7 +82,7 @@ router.put('/:id', [
             check('firstName', 'You must update atleast one of the following: First Name, Last Name, Password').optional(),
             check('lastName', 'You must update atleast one of the following: First Name, Last Name, Password').optional(),
             check('password', 'You must update atleast one of the following: First Name, Last Name, Password').optional()
-        ], 
+        ],
         'You must update atleast one of the following: First Name, Last Name, Password'
     )
 ], async (req, res) => {

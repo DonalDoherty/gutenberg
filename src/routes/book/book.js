@@ -17,7 +17,7 @@ router.post('/', [
     check('edition', 'Edition must be a string').optional().isString(),
     check('genre', 'Genre must be a string').optional().isString(),
     check('language', 'Language must be a string').optional().isString(),
-    check('pageCount', 'Page Count must be a positive integer').optional().isInt({min: 0}),
+    check('pageCount', 'Page Count must be a positive integer').optional().isInt({ min: 0 }),
     check('summary', 'Summary must be a string').optional().isString()
 ], async (req, res) => {
     try {
@@ -129,7 +129,7 @@ router.put('/:id', [
     check('edition', 'Edition must be a string').optional().isString(),
     check('genre', 'Genre must be a string').optional().isString(),
     check('language', 'Language must be a string').optional().isString(),
-    check('pageCount', 'Page Count must be a positive integer').optional().isInt({min: 0}),
+    check('pageCount', 'Page Count must be a positive integer').optional().isInt({ min: 0 }),
     check('summary', 'Summary must be a string').optional().isString()
 ], async (req, res) => {
     try {
@@ -189,8 +189,8 @@ router.get('/', [
     check('edition', 'Edition must be a string').optional().isString(),
     check('genre', 'Genre must be a string').optional().isString(),
     check('language', 'Language must be a string').optional().isString(),
-    check('pageCountMin', 'Page Count Min must be a positive integer').optional().isInt({min: 0}),
-    check('pageCountMax', 'Page Count Max must be a positive integer').optional().isInt({min: 0}),
+    check('pageCountMin', 'Page Count Min must be a positive integer').optional().isInt({ min: 0 }),
+    check('pageCountMax', 'Page Count Max must be a positive integer').optional().isInt({ min: 0 }),
     check('summaryContains', 'Summary Contains must be a string').optional().isString()
 ], async (req, res) => {
     try {
@@ -254,4 +254,4 @@ const isbnInUse = async (isbn13, isbn10) => {
     }
 }
 
-    module.exports = router;
+module.exports = router;

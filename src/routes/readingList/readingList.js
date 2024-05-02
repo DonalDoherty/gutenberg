@@ -130,8 +130,8 @@ router.get('/books/:id', [
     check('edition', 'Edition must be a string').optional().isString(),
     check('genre', 'Genre must be a string').optional().isString(),
     check('language', 'Language must be a string').optional().isString(),
-    check('pageCountMin', 'Page Count Min must be a positive integer').optional().isInt({min: 0}),
-    check('pageCountMax', 'Page Count Max must be a positive integer').optional().isInt({min: 0}),
+    check('pageCountMin', 'Page Count Min must be a positive integer').optional().isInt({ min: 0 }),
+    check('pageCountMax', 'Page Count Max must be a positive integer').optional().isInt({ min: 0 }),
     check('summary', 'Summary must be a string').optional().isString()
 ], async (req, res) => {
     try {
@@ -171,8 +171,8 @@ router.get('/books/:id', [
             AND t2.reading_list_uid = $14;
             `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains, id]).then((response) => {
-            return response.rows;
-        });
+                return response.rows;
+            });
 
         res.json(getBooks);
     } catch (err) {
