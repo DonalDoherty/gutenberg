@@ -164,25 +164,25 @@ router.get('/:id/books', [
 
         const getBooks = await pool.query(`
             SELECT t1.* FROM gutenberg_common.book t1, gutenberg_common.reading_list_matrix t2
-            WHERE t1.isbn13 ILIKE COALESCE('%' || $1 || '%', t1.isbn13)
-            AND t1.isbn10 ILIKE COALESCE('%' || $2 || '%',  t1.isbn10 )
-            AND t1.title ILIKE COALESCE('%' || $3 || '%',  t1.title )
-            AND t1.author ILIKE COALESCE('%' || $4 || '%',  t1.author )
-            AND t1.publisher ILIKE COALESCE('%' || $5 || '%',  t1.publisher )
-            AND t1.publication_date >= COALESCE($6 , t1.publication_date)
-            AND t1.publication_date <= COALESCE($7, t1.publication_date)
-            AND t1.edition ILIKE COALESCE('%' || $8 || '%',  t1.edition )
-            AND t1.genre ILIKE COALESCE('%' || $9 || '%',  t1.genre )
-            AND t1.language ILIKE COALESCE('%' || $10 || '%',  t1.language )
-            AND t1.page_count >= COALESCE($11, t1.page_count)
-            AND t1.page_count <= COALESCE($12, t1.page_count)
-            AND t1.summary ILIKE COALESCE('%' || $13 || '%',  t1.summary )
+            WHERE COALESCE(t1.isbn13, '') ILIKE COALESCE('%' || $1 || '%', t1.isbn13, '')
+            AND COALESCE(t1.isbn10, '') ILIKE COALESCE('%' || $2 || '%',  t1.isbn10, '')
+            AND t1.title ILIKE COALESCE('%' || $3 || '%',  t1.title, '')
+            AND t1.author ILIKE COALESCE('%' || $4 || '%',  t1.author, '')
+            AND COALESCE(t1.publisher, '') ILIKE COALESCE('%' || $5 || '%',  t1.publisher, '')
+            AND COALESCE(t1.publication_date, NOW()) >= COALESCE($6 , t1.publication_date, NOW())
+            AND COALESCE(t1.publication_date, NOW()) <= COALESCE($7, t1.publication_date, NOW())
+            AND COALESCE(t1.edition, '') ILIKE COALESCE('%' || $8 || '%',  t1.edition, '')
+            AND COALESCE(t1.genre, '') ILIKE COALESCE('%' || $9 || '%',  t1.genre, '')
+            AND COALESCE(t1.language, '') ILIKE COALESCE('%' || $10 || '%',  t1.language, '')
+            AND COALESCE(t1.page_count, 0) >= COALESCE($11, t1.page_count, 0)
+            AND COALESCE(t1.page_count, 0) <= COALESCE($12, t1.page_count, 0)
+            AND COALESCE(t1.summary, '') ILIKE COALESCE('%' || $13 || '%',  t1.summary, '')
             AND t2.status_id = COALESCE($14, t2.status_id)
             AND t1.book_uid = t2.book_id
             AND t2.reading_list_id = $15;
             `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains, statusId, id]).then((response) => {
-                return response.rows;
+            return response.rows;
             });
 
         res.json(getBooks);

@@ -203,19 +203,19 @@ router.get('/', [
 
         const getBooks = await pool.query(`
             SELECT * FROM gutenberg_common.book
-            WHERE isbn13 ILIKE COALESCE('%' || $1 || '%', isbn13)
-            AND isbn10 ILIKE COALESCE('%' || $2 || '%',  isbn10 )
-            AND title ILIKE COALESCE('%' || $3 || '%',  title )
-            AND author ILIKE COALESCE('%' || $4 || '%',  author )
-            AND publisher ILIKE COALESCE('%' || $5 || '%',  publisher )
-            AND publication_date >= COALESCE($6 , publication_date)
-            AND publication_date <= COALESCE($7, publication_date)
-            AND edition ILIKE COALESCE('%' || $8 || '%',  edition )
-            AND genre ILIKE COALESCE('%' || $9 || '%',  genre )
-            AND language ILIKE COALESCE('%' || $10 || '%',  language )
-            AND page_count >= COALESCE($11, page_count)
-            AND page_count <= COALESCE($12, page_count)
-            AND summary ILIKE COALESCE('%' || $13 || '%',  summary )
+            WHERE COALESCE(isbn13, '') ILIKE COALESCE('%' || $1 || '%', isbn13, '')
+            AND COALESCE(isbn10, '') ILIKE COALESCE('%' || $2 || '%',  isbn10, '')
+            AND title ILIKE COALESCE('%' || $3 || '%',  title, '')
+            AND author ILIKE COALESCE('%' || $4 || '%',  author, '')
+            AND COALESCE(publisher, '') ILIKE COALESCE('%' || $5 || '%',  publisher, '')
+            AND COALESCE(publication_date, NOW()) >= COALESCE($6 , publication_date, NOW())
+            AND COALESCE(publication_date, NOW()) <= COALESCE($7, publication_date, NOW())
+            AND COALESCE(edition, '') ILIKE COALESCE('%' || $8 || '%',  edition, '')
+            AND COALESCE(genre, '') ILIKE COALESCE('%' || $9 || '%',  genre, '')
+            AND COALESCE(language, '') ILIKE COALESCE('%' || $10 || '%',  language, '')
+            AND COALESCE(page_count, 0) >= COALESCE($11, page_count, 0)
+            AND COALESCE(page_count, 0) <= COALESCE($12, page_count, 0)
+            AND COALESCE(summary, '') ILIKE COALESCE('%' || $13 || '%',  summary, '');
         `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains]).then((response) => {
                 return response.rows;
