@@ -45,7 +45,7 @@ router.delete('/:id', [
 
         res.json(deleteUser);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -74,7 +74,7 @@ router.get('/:id', [
 
         res.json(getUser);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -130,7 +130,7 @@ router.put('/:id', [
 
         res.json(updateUser);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -168,7 +168,7 @@ router.get('/:id/readingLists', [
 
         res.json(getReadingLists);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });

@@ -49,7 +49,7 @@ router.post('/', [
 
         res.json(createBook);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -79,7 +79,7 @@ router.delete('/:id', [
 
         res.json(deleteBook);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -108,7 +108,7 @@ router.get('/:id', [
 
         res.json(getBook);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -172,7 +172,7 @@ router.put('/:id', [
 
         res.json(updateBook);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -224,7 +224,7 @@ router.get('/', [
         res.json(getBooks);
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });

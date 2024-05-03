@@ -24,7 +24,7 @@ router.post('/', [
 
         res.json(createReadingList);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -54,7 +54,7 @@ router.delete('/:id', [
 
         res.json(deleteReadingList);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -83,7 +83,7 @@ router.get('/:id', [
 
         res.json(getReadingList);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -116,7 +116,7 @@ router.put('/:id', [
 
         res.json(updateReadingList);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -187,7 +187,7 @@ router.get('/:id/books', [
 
         res.json(getBooks);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -269,7 +269,7 @@ router.post('/:id/book', [
 
         res.json(addBookToReadingList);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -314,7 +314,7 @@ router.delete('/:readingListId/book/:bookId', [
 
         res.json(removeBookFromReadingList);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -388,7 +388,7 @@ router.put('/:readingListId/book/:bookId', [
 
         res.json(updateBookStatus);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
