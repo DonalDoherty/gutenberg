@@ -18,9 +18,9 @@ router.delete('/:id', [
         const { password } = req.body;
 
         const hashedPassword = await pool.query(`
-        SELECT user_password FROM gutenberg_common.user
-        WHERE user_uid = $1;
-        `, [id]).then((response) => {
+            SELECT user_password FROM gutenberg_common.user
+            WHERE user_uid = $1;
+            `, [id]).then((response) => {
             return response.rows[0]?.user_password;
         });
 
@@ -38,7 +38,7 @@ router.delete('/:id', [
             DELETE FROM gutenberg_common.user
             WHERE user_uid = $1
             RETURNING user_uid;
-        `, [id]).then((response) => {
+            `, [id]).then((response) => {
             return response.rows[0].user_uid;
         });
 
@@ -64,7 +64,7 @@ router.get('/:id', [
         const getUser = await pool.query(`
             SELECT user_email, user_firstname, user_lastname FROM gutenberg_common.user
             WHERE user_uid = $1
-        `, [id]).then((response) => {
+            `, [id]).then((response) => {
             return response.rows[0];
         });
 
@@ -104,14 +104,14 @@ router.put('/:id', [
                 SELECT user_uid FROM gutenberg_common.user
                 WHERE user_uid = $1
             );
-        `, [id]).then((response) => {
+            `, [id]).then((response) => {
             return response.rows[0].exists;
         });
 
         if (!userExists) {
             return res.status(400).send('User not found');
         }
-        
+
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -123,7 +123,7 @@ router.put('/:id', [
             user_password = COALESCE($3, user_password)
             WHERE user_uid = $4
             RETURNING user_uid;
-        `, [firstName, lastName, hashedPassword, id]).then((response) => {
+            `, [firstName, lastName, hashedPassword, id]).then((response) => {
             return response.rows[0].user_uid;
         });
 
@@ -147,11 +147,11 @@ router.get('/:id/readingLists', [
         const { id } = req.params;
 
         const userExists = await pool.query(`
-        SELECT EXISTS(
-            SELECT user_uid FROM gutenberg_common.user
-            WHERE user_uid = $1
-        );
-        `, [id]).then((response) => {
+            SELECT EXISTS(
+                SELECT user_uid FROM gutenberg_common.user
+                WHERE user_uid = $1
+            );
+            `, [id]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -162,7 +162,7 @@ router.get('/:id/readingLists', [
         const getReadingLists = await pool.query(`
             SELECT * FROM gutenberg_common.reading_list
             WHERE user_id = $1
-        `, [id]).then((response) => {
+            `, [id]).then((response) => {
             return response.rows;
         });
 

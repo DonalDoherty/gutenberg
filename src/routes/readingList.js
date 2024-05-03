@@ -182,7 +182,7 @@ router.get('/:id/books', [
             AND t2.reading_list_id = $15;
             `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains, statusId, id]).then((response) => {
-            return response.rows;
+                return response.rows;
             });
 
         res.json(getBooks);
@@ -224,7 +224,7 @@ router.post('/:id/book', [
                 SELECT book_uid FROM gutenberg_common.book
                 WHERE book_uid = $1
             );
-        `, [bookId]).then((response) => {
+            `, [bookId]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -238,7 +238,7 @@ router.post('/:id/book', [
                 WHERE reading_list_id = $1
                 AND book_id = $2
             );
-        `, [id, bookId]).then((response) => {
+            `, [id, bookId]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -251,7 +251,7 @@ router.post('/:id/book', [
                 SELECT lu_book_status_uid FROM gutenberg_common.lu_book_status
                 WHERE lu_book_status_uid = $1
             );
-        `, [statusId]).then((response) => {
+            `, [statusId]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -263,7 +263,7 @@ router.post('/:id/book', [
             INSERT INTO gutenberg_common.reading_list_matrix (reading_list_id, book_id, status_id)
             VALUES ($1, $2, $3)
             RETURNING reading_list_matrix_uid;
-        `, [id, bookId, statusId]).then((response) => {
+            `, [id, bookId, statusId]).then((response) => {
             return response.rows[0].reading_list_matrix_uid;
         });
 
@@ -291,7 +291,7 @@ router.delete('/:readingListId/book/:bookId', [
                 SELECT reading_list_uid FROM gutenberg_common.reading_list
                 WHERE reading_list_uid = $1
             );
-        `, [readingListId]).then((response) => {
+            `, [readingListId]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -304,7 +304,7 @@ router.delete('/:readingListId/book/:bookId', [
             WHERE reading_list_id = $1
             AND book_id = $2
             RETURNING reading_list_matrix_uid;
-        `, [readingListId, bookId]).then((response) => {
+            `, [readingListId, bookId]).then((response) => {
             return response.rows[0]?.reading_list_matrix_uid;
         });
 
@@ -338,7 +338,7 @@ router.put('/:readingListId/book/:bookId', [
                 SELECT reading_list_uid FROM gutenberg_common.reading_list
                 WHERE reading_list_uid = $1
             );
-        `, [readingListId]).then((response) => {
+            `, [readingListId]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -351,7 +351,7 @@ router.put('/:readingListId/book/:bookId', [
                 SELECT book_uid FROM gutenberg_common.book
                 WHERE book_uid = $1
             );
-        `, [bookId]).then((response) => {
+            `, [bookId]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -364,7 +364,7 @@ router.put('/:readingListId/book/:bookId', [
                 SELECT lu_book_status_uid FROM gutenberg_common.lu_book_status
                 WHERE lu_book_status_uid = $1
             );
-        `, [statusId]).then((response) => {
+            `, [statusId]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -378,7 +378,7 @@ router.put('/:readingListId/book/:bookId', [
             WHERE reading_list_id = $2
             AND book_id = $3
             RETURNING reading_list_matrix_uid;
-        `, [statusId, readingListId, bookId]).then((response) => {
+            `, [statusId, readingListId, bookId]).then((response) => {
             return response.rows[0]?.reading_list_matrix_uid;
         });
 

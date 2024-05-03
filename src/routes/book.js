@@ -162,7 +162,7 @@ router.put('/:id', [
                 summary = COALESCE($11, summary)
             WHERE book_uid = $12
             RETURNING book_uid;
-        `, [isbn13, isbn10, title, author, publisher, publicationDate, edition, genre, language, pageCount, summary, id]).then((response) => {
+            `, [isbn13, isbn10, title, author, publisher, publicationDate, edition, genre, language, pageCount, summary, id]).then((response) => {
             return response.rows[0].book_uid;
         });
 
@@ -197,7 +197,7 @@ router.get('/', [
         if (!validationResult(req).isEmpty()) {
             return res.status(400).json({ errors: validationResult(req).array() });
         }
-        
+
         const { isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains } = req.body;
 
@@ -216,7 +216,7 @@ router.get('/', [
             AND COALESCE(page_count, 0) >= COALESCE($11, page_count, 0)
             AND COALESCE(page_count, 0) <= COALESCE($12, page_count, 0)
             AND COALESCE(summary, '') ILIKE COALESCE('%' || $13 || '%',  summary, '');
-        `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
+            `, [isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains]).then((response) => {
                 return response.rows;
             });
@@ -238,7 +238,7 @@ const isbnInUse = async (isbn13, isbn10) => {
                 SELECT book_uid FROM gutenberg_common.book
                 WHERE isbn13 = $1
             );
-        `, [isbn13]).then((response) => {
+            `, [isbn13]).then((response) => {
             return response.rows[0].exists;
         });
     }
@@ -248,7 +248,7 @@ const isbnInUse = async (isbn13, isbn10) => {
                     SELECT book_uid FROM gutenberg_common.book
                     WHERE isbn10 = $1
                 );
-            `, [isbn10]).then((response) => {
+                `, [isbn10]).then((response) => {
             return response.rows[0].exists;
         });
     }

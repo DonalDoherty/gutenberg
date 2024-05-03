@@ -3,6 +3,7 @@ const pool = require('../database/database');
 const bcrypt = require('bcrypt');
 const jwtTokenGenerator = require('../auth/jwtTokenGenerator');
 const { body, validationResult } = require('express-validator');
+const methods = require('../common/methods');
 
 router.post('/', [
     body('email', 'Email is required and must be a valid email').exists().isEmail(),
@@ -15,25 +16,16 @@ router.post('/', [
 
         const { email, password } = req.body;
 
-        const userExists = await pool.query(`
-            SELECT EXISTS(
-                SELECT user_uid FROM gutenberg_common.user
-                WHERE user_email = $1
-            );
-        `, [email]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (userExists === false) {
-            return res.status(401).send('Invalid email or password');
-        }
-
         const user = await pool.query(`
             SELECT * FROM gutenberg_common.user
             WHERE user_email = $1;
-        `, [email]).then((response) => {
-            return response.rows[0];
+            `, [email]).then((response) => {
+            return response?.rows[0];
         });
+
+        if (!user) {
+            return res.status(401).send('Invalid email or password');
+        }
 
         const passwordCorrect = await bcrypt.compare(password, user.user_password);
 

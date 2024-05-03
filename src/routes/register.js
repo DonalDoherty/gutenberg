@@ -24,7 +24,7 @@ router.post('/', [
                 SELECT user_uid FROM gutenberg_common.user
                 WHERE user_email = $1
             );
-        `, [email]).then((response) => {
+            `, [email]).then((response) => {
             return response.rows[0].exists;
         });
 
@@ -35,7 +35,7 @@ router.post('/', [
         const registrationKeyUsed = await pool.query(`
             SELECT used FROM gutenberg_common.registration_key
             WHERE key_code = $1;
-        `, [registrationKey]).then((response) => {
+            `, [registrationKey]).then((response) => {
             return response.rows[0]?.used;
         });
 
@@ -46,7 +46,8 @@ router.post('/', [
                 UPDATE gutenberg_common.registration_key
                 SET used = true
                 WHERE key_code = $1;
-            `, [registrationKey]);
+                `, [registrationKey]
+            );
         }
 
         const saltRounds = 10;
@@ -57,9 +58,9 @@ router.post('/', [
             INSERT INTO gutenberg_common.user (user_firstname, user_lastname, user_email, user_password)
             VALUES ($1, $2, $3, $4)
             RETURNING user_uid;
-        `, [firstName, lastName, email, hashedPassword]).then((response) => {
+            `, [firstName, lastName, email, hashedPassword]).then((response) => {
             return response.rows[0].user_uid;
-        });
+            });
 
         const token = jwtTokenGenerator(registerUser);
 
