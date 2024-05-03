@@ -3,7 +3,6 @@ const pool = require('../database/database');
 const bcrypt = require('bcrypt');
 const jwtTokenGenerator = require('../auth/jwtTokenGenerator');
 const { body, validationResult } = require('express-validator');
-const methods = require('../common/methods');
 
 router.post('/', [
     body('email', 'Email is required and must be a valid email').exists().isEmail(),

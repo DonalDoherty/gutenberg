@@ -22,6 +22,18 @@ async function readingListExists(readingListId) {
     });
 }
 
+async function readingListTitleInUseForUser(userId, title) {
+    return await pool.query(`
+    SELECT EXISTS(
+        SELECT reading_list_uid FROM gutenberg_common.reading_list
+        WHERE user_uid = $1
+        AND title = $2
+    );
+    `, [userId, title]).then((response) => {
+        return response.rows[0].exists;
+    });
+}
+
 async function statusValid(statusId) {
     return await pool.query(`
     SELECT EXISTS(
@@ -35,4 +47,5 @@ async function statusValid(statusId) {
 
 exports.bookExists = bookExists;
 exports.readingListExists = readingListExists;
+exports.readingListTitleInUseForUser = readingListTitleInUseForUser;
 exports.statusValid = statusValid;

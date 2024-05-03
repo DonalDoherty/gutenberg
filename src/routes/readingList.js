@@ -15,6 +15,10 @@ router.post('/', [
 
         const { userId, title } = req.body;
 
+        if (await methods.readingListTitleInUseForUser(userId, title)) {
+            return res.status(400).send('Reading List Title is already in use');
+        }
+
         const createReadingList = await pool.query(`
             INSERT INTO gutenberg_common.reading_list (user_id, title)
             VALUES ($1, $2)
@@ -101,6 +105,10 @@ router.put('/:id', [
 
         const { id } = req.params;
         const { title } = req.body;
+
+        if (await methods.readingListTitleInUseForUser(userId, title)) {
+            return res.status(400).send('Reading List Title is already in use');
+        }
 
         const updateReadingList = await pool.query(`
             UPDATE gutenberg_common.reading_list
