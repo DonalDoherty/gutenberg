@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const pool = require('../database/database');
 const { body, oneOf, param, validationResult } = require('express-validator');
+const methods = require('../common/methods');
 
 // Create a book
 router.post('/', [
@@ -99,7 +100,7 @@ router.get('/:id', [
             SELECT * FROM gutenberg_common.book
             WHERE book_uid = $1
         `, [id]).then((response) => {
-            return response.rows[0];
+            return response?.rows[0];
         });
 
         if (!getBook) {
@@ -139,6 +140,10 @@ router.put('/:id', [
 
         const { id } = req.params;
         const { isbn13, isbn10, title, author, publisher, publicationDate, edition, genre, language, pageCount, summary } = req.body;
+
+        if (!await methods.bookExists(id)) {
+            return res.status(404).send('Book not found');
+        }
 
         const { isbn13InUse, isbn10InUse } = await isbnInUse(isbn13, isbn10);
         if (isbn13InUse) {

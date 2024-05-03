@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const pool = require('../database/database');
 const { body, param, validationResult } = require('express-validator');
+const methods = require('../common/methods');
 
 // Create a reading list
 router.post('/', [
@@ -45,7 +46,7 @@ router.delete('/:id', [
             WHERE reading_list_uid = $1
             RETURNING reading_list_uid;
         `, [id]).then((response) => {
-            return response.rows[0].reading_list_uid;
+            return response.rows[0]?.reading_list_uid;
         });
 
         if (!deleteReadingList) {
@@ -107,7 +108,7 @@ router.put('/:id', [
             WHERE reading_list_uid = $2
             RETURNING reading_list_uid;
         `, [title, id]).then((response) => {
-            return response.rows[0].reading_list_uid;
+            return response.rows[0]?.reading_list_uid;
         });
 
         if (!updateReadingList) {
@@ -149,16 +150,7 @@ router.get('/:id/books', [
         const { isbn13, isbn10, title, author, publisher, publicationDateStart, publicationDateEnd,
             edition, genre, language, pageCountMin, pageCountMax, summaryContains, statusId } = req.body;
 
-        const readingListExists = await pool.query(`
-            SELECT EXISTS(
-                SELECT reading_list_uid FROM gutenberg_common.reading_list
-                WHERE reading_list_uid = $1
-            );
-            `, [id]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!readingListExists) {
+        if (!await methods.readingListExists(id)) {
             return res.status(400).send('Reading List not found');
         }
 
@@ -206,29 +198,11 @@ router.post('/:id/book', [
         const { id } = req.params;
         const { bookId, statusId } = req.body;
 
-        const readingListExists = await pool.query(`
-            SELECT EXISTS(
-                SELECT reading_list_uid FROM gutenberg_common.reading_list
-                WHERE reading_list_uid = $1
-            );
-        `, [id]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!readingListExists) {
+        if (!!await methods.readingListExists(id)) {
             return res.status(400).send('Reading List not found');
         }
 
-        const bookExists = await pool.query(`
-            SELECT EXISTS(
-                SELECT book_uid FROM gutenberg_common.book
-                WHERE book_uid = $1
-            );
-            `, [bookId]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!bookExists) {
+        if (!await methods.bookExists(bookId)) {
             return res.status(400).send('Book not found');
         }
 
@@ -246,16 +220,7 @@ router.post('/:id/book', [
             return res.status(400).send('Book already in Reading List');
         }
 
-        const statusValid = await pool.query(`
-            SELECT EXISTS(
-                SELECT lu_book_status_uid FROM gutenberg_common.lu_book_status
-                WHERE lu_book_status_uid = $1
-            );
-            `, [statusId]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!statusValid) {
+        if (!await methods.statusValid(statusId)) {
             return res.status(400).send('Invalid book status');
         }
 
@@ -286,17 +251,12 @@ router.delete('/:readingListId/book/:bookId', [
 
         const { readingListId, bookId } = req.params;
 
-        const readingListExists = await pool.query(`
-            SELECT EXISTS(
-                SELECT reading_list_uid FROM gutenberg_common.reading_list
-                WHERE reading_list_uid = $1
-            );
-            `, [readingListId]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!readingListExists) {
+        if (!await methods.readingListExists(readingListId)) {
             return res.status(400).send('Reading List not found');
+        }
+
+        if (!await methods.bookExists(bookId)) {
+            return res.status(400).send('Book not found');
         }
 
         const removeBookFromReadingList = await pool.query(`
@@ -333,42 +293,15 @@ router.put('/:readingListId/book/:bookId', [
         const { readingListId, bookId } = req.params;
         const { statusId } = req.body;
 
-        const readingListExists = await pool.query(`
-            SELECT EXISTS(
-                SELECT reading_list_uid FROM gutenberg_common.reading_list
-                WHERE reading_list_uid = $1
-            );
-            `, [readingListId]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!readingListExists) {
+        if (!await methods.readingListExists(readingListId)) {
             return res.status(400).send('Reading List not found');
         }
 
-        const bookExists = await pool.query(`
-            SELECT EXISTS(
-                SELECT book_uid FROM gutenberg_common.book
-                WHERE book_uid = $1
-            );
-            `, [bookId]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!bookExists) {
+        if (!await methods.bookExists(bookId)) {
             return res.status(400).send('Book not found');
         }
 
-        const statusValid = await pool.query(`
-            SELECT EXISTS(
-                SELECT lu_book_status_uid FROM gutenberg_common.lu_book_status
-                WHERE lu_book_status_uid = $1
-            );
-            `, [statusId]).then((response) => {
-            return response.rows[0].exists;
-        });
-
-        if (!statusValid) {
+        if (!await methods.statusValid(statusId)) {
             return res.status(400).send('Invalid book status');
         }
 
