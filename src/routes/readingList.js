@@ -132,7 +132,7 @@ router.put('/:id', [
 });
 
 // Get all books for a reading list, optional filters
-router.get('/:id/books', [
+router.post('/:id/bookSearch', [
     param('id', 'Reading List ID is required and must be a positive integer').exists().isInt({ min: 0 }),
     body('isbn13', 'ISBN-13 must be a valid ISBN').optional().isISBN(13),
     body('isbn10', 'ISBN-10 must be a valid ISBN').optional().isISBN(10),

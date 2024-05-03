@@ -182,7 +182,7 @@ router.put('/:id', [
 });
 
 // Get books with filters
-router.get('/', [
+router.post('/bookSearch', [
     body('isbn13', 'ISBN-13 must be a valid ISBN').optional().isISBN(13),
     body('isbn10', 'ISBN-10 must be a valid ISBN').optional().isISBN(10),
     body('title', 'Title must be a string').optional().isString(),
