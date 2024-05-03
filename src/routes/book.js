@@ -3,7 +3,6 @@ const pool = require('../database/database');
 const { body, oneOf, param, validationResult } = require('express-validator');
 const methods = require('../common/methods');
 
-// Create a book
 router.post('/', [
     oneOf(
         [
@@ -123,8 +122,8 @@ router.put('/:id', [
             body('isbn10', 'Atleast one valid ISBN type is required').optional().isISBN(10)
         ]
     ),
-    body('title', 'Title is required and must be a string').exists().isString(),
-    body('author', 'Author is required and must be a string').exists().isString(),
+    body('title', 'Title is required and must be a string').optional().isString(),
+    body('author', 'Author is required and must be a string').optional().isString(),
     body('publisher', 'Publisher must be a string').optional().isString(),
     body('publicationDate', 'Publication Date must be a valid date').optional().isDate(),
     body('edition', 'Edition must be a string').optional().isString(),

@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const jwtTokenGenerator = require('../auth/jwtTokenGenerator');
 const { body, validationResult } = require('express-validator');
 
-
 router.post('/', [
     body('firstName', 'First name is required and must be a string').exists().isString(),
     body('lastName', 'Last name is required and must be a string').exists().isString(),

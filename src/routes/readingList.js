@@ -97,6 +97,7 @@ router.get('/:id', [
 router.put('/:id', [
     param('id', 'Reading List ID is required and must be a positive integer').exists(),
     body('title', 'Title is required and must be a string').exists().isString(),
+    body('userId', 'User ID is required and must be a positive integer').exists().isInt({ min: 0 }),
 ], async (req, res) => {
     try {
         if (!validationResult(req).isEmpty()) {
@@ -104,7 +105,7 @@ router.put('/:id', [
         }
 
         const { id } = req.params;
-        const { title } = req.body;
+        const { userId, title } = req.body;
 
         if (await methods.readingListTitleInUseForUser(userId, title)) {
             return res.status(400).send('Reading List Title is already in use');
@@ -163,7 +164,7 @@ router.get('/:id/books', [
         }
 
         const getBooks = await pool.query(`
-            SELECT t1.* FROM gutenberg_common.book t1, gutenberg_common.reading_list_matrix t2
+            SELECT t1.*, t2.status_id FROM gutenberg_common.book t1, gutenberg_common.reading_list_matrix t2
             WHERE COALESCE(t1.isbn13, '') ILIKE COALESCE('%' || $1 || '%', t1.isbn13, '')
             AND COALESCE(t1.isbn10, '') ILIKE COALESCE('%' || $2 || '%',  t1.isbn10, '')
             AND t1.title ILIKE COALESCE('%' || $3 || '%',  t1.title, '')
@@ -206,7 +207,7 @@ router.post('/:id/book', [
         const { id } = req.params;
         const { bookId, statusId } = req.body;
 
-        if (!!await methods.readingListExists(id)) {
+        if (!await methods.readingListExists(id)) {
             return res.status(400).send('Reading List not found');
         }
 

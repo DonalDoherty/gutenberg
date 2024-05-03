@@ -26,7 +26,7 @@ async function readingListTitleInUseForUser(userId, title) {
     return await pool.query(`
     SELECT EXISTS(
         SELECT reading_list_uid FROM gutenberg_common.reading_list
-        WHERE user_uid = $1
+        WHERE user_id = $1
         AND title = $2
     );
     `, [userId, title]).then((response) => {
